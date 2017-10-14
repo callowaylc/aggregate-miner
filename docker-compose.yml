@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  nginx:
+    image: nginx:1.13
+    ports:
+      - ${PORT_NGINX}:80
+    volumes:
+      - ./src/var/www/html:/usr/share/nginx/html:ro
+      - ./src/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+    container_name: aggregate-miner-nginx
