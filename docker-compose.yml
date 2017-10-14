@@ -1,5 +1,9 @@
 version: "2"
 
+volumes:
+  nginx:
+  varnish:
+
 services:
   nginx:
     image: nginx:1.13
@@ -8,6 +12,7 @@ services:
     volumes:
       - ./src/var/www/html:/usr/share/nginx/html:ro
       - ./src/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx:/var/log/nginx
     container_name: aggregate-miner-nginx
   varnish:
     image: million12/varnish:latest
@@ -16,7 +21,11 @@ services:
     links:
       - nginx:backend-host
     volumes:
-      - ./src/etc/varnish/default.vcl:/etc/varnish/default.vcl
+      - ./src/etc/varnish/default.vcl:/etc/varnish/default.vcl:ro
+      - ./src/etc/varnish/varnish.params:/etc/varnish/varnish.params:ro
+      - varnish:/var/log/varnish
     ports:
       - ${PORT_VARNISH}:80
     container_name: aggregate-miner-varnish
+    environment:
+      VARNISHNCSA_ENABLED: 1
