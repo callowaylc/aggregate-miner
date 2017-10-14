@@ -9,3 +9,14 @@ services:
       - ./src/var/www/html:/usr/share/nginx/html:ro
       - ./src/etc/nginx/conf.d:/etc/nginx/conf.d:ro
     container_name: aggregate-miner-nginx
+  varnish:
+    image: million12/varnish:latest
+    depends_on:
+      - nginx
+    links:
+      - nginx:backend-host
+    volumes:
+      - ./src/etc/varnish/default.vcl:/etc/varnish/default.vcl
+    ports:
+      - ${PORT_VARNISH}:80
+    container_name: aggregate-miner-varnish
