@@ -29,3 +29,22 @@ services:
     container_name: aggregate-miner-varnish
     environment:
       VARNISHNCSA_ENABLED: 1
+  loggly:
+    image: cloudrity/loggly:latest
+    depends_on:
+      - varnish
+      - nginx
+    user: root
+    container_name: aggregrate-miner-loggly
+    volumes_from:
+      - nginx:ro
+      - varnish:ro
+    environment:
+      LOGGLY_TOKEN: ${LOGGLY_TOKEN}
+      LOGGLY_ACCOUNT: callowayart
+      USERNAME: callowayart
+      PASSWORD: ${LOGGLY_PASSWORD}
+      DIRECTORIES_TO_MONITOR: "/var/log/nginx,/var/log/varnish"
+      TAGS: aggregrate-miner
+      INTERVAL_TIME: 3600
+      SUPPRESS_PROMPT: "foobar"
