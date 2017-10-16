@@ -1,5 +1,6 @@
 export PORT_NGINX ?= 8080
 export PORT_VARNISH ?= 80
+export PORT_DATADOG ?= 8125
 export KEY_COINHIVE ?= qvqJHHQ8CTQXKT4bsSszNbs6fSpnma5D
 
 -include .secrets
@@ -19,6 +20,15 @@ release:
 	@ curl -Is localhost
 	#@ docker-compose exec loggly ./add /var/log/varnish/access.log
 
-.PHONY: test
+.PHONY: build
 build:
-	@ docker-compose build loggly
+	@ docker-compose build datadog_metrics
+
+.PHONY: stats
+stats:
+	# sends stats to datadog
+	#@ docker-compose up -d --remove-orphans --force-recreate datadog_metrics
+	curl -s https://api.coinhive.com/stats/site?secret=$(COINHIVE_SECRET) \
+		| jq .hashesPerSecond \
+		| xargs -I{} \
+				echo -n "hashes_per_second:{}|g|#aggregrate-minder"

@@ -64,4 +64,25 @@ services:
       INTERVAL_TIME: 3600
     command: tail -f /var/log/syslog
 
+  datadog:
+    image: datadog/docker-dd-agent:latest
+    container_name: aggregrate-miner-datadog-agent
+    environment:
+      API_KEY: ${DATADOG_KEY}
+      SD_BACKEND: docker
+    ports:
+      - ${PORT_DATADOG}:8125
+
+  datadog_metrics:
+    extends: __base__
+    build:
+      dockerfile: ./docker/datadog_metrics/Dockerfile
+      context: ./
+    image: callowaylc/datadog_metrics
+    links:
+      - datadog:datadog
+    command: sleep 1000
+
+
+
 
