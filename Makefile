@@ -5,6 +5,10 @@ export KEY_COINHIVE ?= qvqJHHQ8CTQXKT4bsSszNbs6fSpnma5D
 
 -include .secrets
 
+all:
+	mkdir -p ./logs/var/log/varnish ./logs/var/log/nginx
+
+
 .PHONY: release
 release:
 	@- docker-compose down -v 2>/dev/null
