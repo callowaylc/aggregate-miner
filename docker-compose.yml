@@ -18,6 +18,7 @@ services:
     volumes:
       - ./src/var/www/html:/usr/share/nginx/html:ro
       - ./src/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./logs/var/log/nginx:/var/log/nginx:rw
       - nginx:/var/log/nginx
     container_name: aggregate-miner-nginx
 
@@ -31,6 +32,7 @@ services:
     volumes:
       - ./src/etc/varnish/default.vcl:/etc/varnish/default.vcl:ro
       - ./src/etc/varnish/varnish.params:/etc/varnish/varnish.params:ro
+      - ./logs/var/log/varnish:/var/log/varnish:rw
       - varnish:/var/log/varnish
     ports:
       - ${PORT_VARNISH}:80
