@@ -7,9 +7,18 @@ export KEY_COINHIVE ?= qvqJHHQ8CTQXKT4bsSszNbs6fSpnma5D
 .PHONY: release
 release:
 	@- docker-compose down -v 2>/dev/null
-	@ docker-compose up -d --remove-orphans --force-recreate
-	@ docker-compose exec -uroot varnish varnishncsa -Daw /var/log/varnish/access.log
+	@ docker-compose up -d --remove-orphans --force-recreate \
+			nginx varnish
+	@ docker-compose exec -d varnish \
+			varnishncsa \
+				-D \
+				-a \
+				-w /var/log/varnish/access.log
+
+	@ sleep 5
+	@ curl -Is localhost
+	#@ docker-compose exec loggly ./add /var/log/varnish/access.log
 
 .PHONY: test
-test:
-	@ docker-compose restart loggly
+build:
+	@ docker-compose build loggly

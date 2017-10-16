@@ -5,7 +5,13 @@ volumes:
   varnish:
 
 services:
+  __base__:
+    build:
+      context: ./
+    environment:
+      TZ: America/New_York
   nginx:
+    extends: __base__
     image: nginx:1.13
     ports:
       - ${PORT_NGINX}:80
@@ -14,7 +20,9 @@ services:
       - ./src/etc/nginx/conf.d:/etc/nginx/conf.d:ro
       - nginx:/var/log/nginx
     container_name: aggregate-miner-nginx
+
   varnish:
+    extends: __base__
     image: million12/varnish:latest
     depends_on:
       - nginx
@@ -29,22 +37,29 @@ services:
     container_name: aggregate-miner-varnish
     environment:
       VARNISHNCSA_ENABLED: 1
+
   loggly:
-    image: cloudrity/loggly:latest
+    extends: __base__
+    build:
+      dockerfile: ./docker/loggly/Dockerfile
+      context: ./
+    image: callowaylc/loggly
+    privileged: true
     depends_on:
       - varnish
       - nginx
     user: root
-    container_name: aggregrate-miner-loggly
+    container_name: aggregate-miner-loggly
     volumes_from:
-      - nginx:ro
-      - varnish:ro
+      - nginx:rw
+      - varnish:rw
     environment:
       LOGGLY_TOKEN: ${LOGGLY_TOKEN}
       LOGGLY_ACCOUNT: callowayart
       USERNAME: callowayart
       PASSWORD: ${LOGGLY_PASSWORD}
-      DIRECTORIES_TO_MONITOR: "/var/log/nginx,/var/log/varnish"
       TAGS: aggregrate-miner
       INTERVAL_TIME: 3600
-      SUPPRESS_PROMPT: "foobar"
+    command: tail -f /var/log/syslog
+
+
