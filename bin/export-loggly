@@ -1,0 +1,24 @@
+#!/bin/bash
+
+name=${2:-$1}
+name=`basename $name .log`
+
+bash \
+  configure-file-monitoring.sh \
+    -s \
+    -a ${LOGGLY_ACCOUNT} \
+    -t ${LOGGLY_TOKEN} \
+    -u ${USERNAME} \
+    -p "${PASSWORD}" \
+    -f "${1}" \
+    -l "${name}" \
+    -tag "${TAGS} ${name}"
+
+# Kill /usr/sbin/rsyslogd
+rm -rf /var/run/rsyslogd.pid
+pkill -9 -f rsyslog
+
+# start in backgroun
+echo "Starting rsyslogd..."
+service rsyslog start
+echo "Started."

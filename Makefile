@@ -5,6 +5,7 @@ export KEY_COINHIVE ?= qvqJHHQ8CTQXKT4bsSszNbs6fSpnma5D
 
 -include .secrets
 
+
 .PHONY: build
 build:
 	@ docker-compose build loggly datadog_metrics
@@ -24,8 +25,8 @@ release:
 	@ sleep 5
 	@ curl -Is localhost 2>&1 >/dev/null
 	@ docker-compose exec loggly ./add /var/log/varnish/access.log varnish-access
-	@ docker-compose exec loggly ./add /var/log/nginx/access.log nginx-access
-	@ docker-compose exec loggly ./add /var/log/nginx/error.log nginx-error
+	@ docker-compose exec loggly ./add /var/log/nginx/ag.access.log nginx-access
+	@ docker-compose exec loggly ./add /var/log/nginx/ag.error.log nginx-error
 
 .PHONY: stats
 stats:
@@ -34,5 +35,6 @@ stats:
 
 .PHONY: test
 test:
-	@ docker-compose up -d datadog
-	@ docker-compose up datadog_metrics
+	@ docker-compose exec loggly ./add /var/log/varnish/access.log varnish-access
+	@ docker-compose exec loggly ./add /var/log/nginx/ag.access.log nginx-access
+	@ docker-compose exec loggly ./add /var/log/nginx/ag.error.log nginx-error
