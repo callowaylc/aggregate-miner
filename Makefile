@@ -31,4 +31,4 @@ stats:
 	curl -s https://api.coinhive.com/stats/site?secret=$(COINHIVE_SECRET) \
 		| jq .hashesPerSecond \
 		| xargs -I{} \
-				echo -n "hashes_per_second:{}|g|#aggregrate-minder" >/dev/udp/localhost/8125
+				echo -n "hashes_per_second:{}|g|#aggregrate-miner" >/dev/udp/localhost/8125
