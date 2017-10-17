@@ -16,6 +16,7 @@ release:
 			nginx varnish loggly datadog datadog_metrics
 	@ docker-compose exec -d varnish \
 			varnishncsa \
+				-F '%{X-Forwarded-For}i %l %u %t "%r" %s %b "%{Referer}i" "%{User-agent}i"' \
 				-D \
 				-a \
 				-w /var/log/varnish/access.log
