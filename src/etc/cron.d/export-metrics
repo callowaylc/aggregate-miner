@@ -1,0 +1,1 @@
+* * * * * root cd /opt/datadog_metrics/ && make stats >> /var/log/cron.log 2>&1

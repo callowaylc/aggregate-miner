@@ -18,8 +18,7 @@ services:
     volumes:
       - ./src/var/www/html:/usr/share/nginx/html:ro
       - ./src/etc/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./logs/var/log/nginx:/var/log/nginx:rw
-      #- nginx:/var/log/nginx
+      - nginx:/var/log/nginx
     container_name: aggregate-miner-nginx
 
   varnish:
@@ -32,8 +31,7 @@ services:
     volumes:
       - ./src/etc/varnish/default.vcl:/etc/varnish/default.vcl:ro
       - ./src/etc/varnish/varnish.params:/etc/varnish/varnish.params:ro
-      - ./logs/var/log/varnish:/var/log/varnish:rw
-      #- varnish:/var/log/varnish
+      - varnish:/var/log/varnish
     ports:
       - ${PORT_VARNISH}:80
     container_name: aggregate-miner-varnish
@@ -52,26 +50,23 @@ services:
       - nginx
     user: root
     container_name: aggregate-miner-loggly
-    #volumes_from:
-    #  - nginx:rw
-    #  - varnish:rw
+    volumes_from:
+      - nginx:rw
+      - varnish:rw
     environment:
       LOGGLY_TOKEN: ${LOGGLY_TOKEN}
       LOGGLY_ACCOUNT: callowayart
       USERNAME: callowayart
       PASSWORD: ${LOGGLY_PASSWORD}
       TAGS: aggregrate-miner
-      INTERVAL_TIME: 3600
     command: tail -f /var/log/syslog
 
   datadog:
     image: datadog/docker-dd-agent:latest
-    container_name: aggregrate-miner-datadog-agent
+    container_name: aggregate-miner-datadog-agent
     environment:
       API_KEY: ${DATADOG_KEY}
       SD_BACKEND: docker
-    ports:
-      - ${PORT_DATADOG}:8125
 
   datadog_metrics:
     extends: __base__
@@ -80,8 +75,8 @@ services:
       context: ./
     image: callowaylc/datadog_metrics
     links:
-      - datadog:datadog
-    command: sleep 1000
+      - datadog
+    container_name: aggregate-miner-datadog-metrics
 
 
 

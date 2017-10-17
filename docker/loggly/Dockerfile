@@ -13,8 +13,8 @@ RUN true && \
     curl \
     rsyslog-gnutls && \
     cp -vf /usr/share/zoneinfo/${TZ} /etc/localtime && \
-    curl -O https://www.loggly.com/install/configure-linux.sh && \
-    curl -O https://www.loggly.com/install/configure-file-monitoring.sh && \
+    curl -Os https://www.loggly.com/install/configure-linux.sh && \
+    curl -Os https://www.loggly.com/install/configure-file-monitoring.sh && \
     sed -i "s/checkIfLogsMadeToLoggly$/echo \"Not checking...\"/g" configure-linux.sh && \
     sed -i "s/checkIfFileLogsMadeToLoggly$//g" configure-file-monitoring.sh && \
     sed -i "s/curl .*//g" configure-file-monitoring.sh && \

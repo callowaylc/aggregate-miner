@@ -1,0 +1,8 @@
+#!/bin/bash
+# Exports hash_per_second to UDP/8125
+
+curl -s https://api.coinhive.com/stats/site?secret=${COINHIVE_SECRET} \
+    | jq .hashesPerSecond \
+    | xargs -I{} \
+        echo -n "hashes_per_second:{}|g|#aggregate-miner,coinhive,hash-rate" \
+          >/dev/udp/datadog/8125

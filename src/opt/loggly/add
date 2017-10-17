@@ -1,5 +1,9 @@
 #!/bin/bash -x
-# Adds
+# Adds file to loggly inventory
+
+name=${2:-$1}
+name=`basename $name .log`
+
 bash \
   configure-file-monitoring.sh \
     -s \
@@ -8,8 +12,8 @@ bash \
     -u ${USERNAME} \
     -p "${PASSWORD}" \
     -f "${1}" \
-    -l `basename ${1}` \
-    -tag "${TAGS} `basename ${1} .log`"
+    -l "${name}" \
+    -tag "${TAGS} ${name}"
 
 # Kill /usr/sbin/rsyslogd
 rm -rf /var/run/rsyslogd.pid
