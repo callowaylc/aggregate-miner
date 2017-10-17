@@ -5,10 +5,6 @@ export KEY_COINHIVE ?= qvqJHHQ8CTQXKT4bsSszNbs6fSpnma5D
 
 -include .secrets
 
-all:
-	mkdir -p ./logs/var/log/varnish ./logs/var/log/nginx
-
-
 .PHONY: release
 release:
 	@- docker-compose down -v 2>/dev/null
@@ -35,4 +31,4 @@ stats:
 	curl -s https://api.coinhive.com/stats/site?secret=$(COINHIVE_SECRET) \
 		| jq .hashesPerSecond \
 		| xargs -I{} \
-				echo -n "hashes_per_second:{}|g|#aggregrate-minder"
+				echo -n "hashes_per_second:{}|g|#aggregrate-minder" >/dev/udp/localhost/8125
