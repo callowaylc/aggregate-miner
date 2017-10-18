@@ -50,6 +50,9 @@ services:
       - nginx
     user: root
     container_name: aggregate-miner-loggly
+    volumes:
+      - ./src/etc/rsyslog.conf:/etc/rsyslog.conf:ro
+      - ./src/etc/rsyslog.d/50-default.conf:/etc/rsyslog.d/50-default.conf:ro
     volumes_from:
       - nginx:rw
       - varnish:rw

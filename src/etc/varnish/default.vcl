@@ -21,6 +21,7 @@ backend default {
 acl purge {
   "localhost";
   "127.0.0.1";
+  "172.0.0.0"/8;
 }
 
 sub vcl_recv {
@@ -45,19 +46,24 @@ sub vcl_recv {
 
 sub vcl_hash {
   hash_data(req.url);
+  if (req.http.X-Forwarded-For ~ "67\.249\.255\..*") {
+    hash_data("blacklist");
+  }
+
   return (lookup);
 }
 
 # Drop any cookies Wordpress tries to send back to the client.
 sub vcl_backend_response {
   set beresp.http.X-Cacheable = "yes";
+  set beresp.http.X-Forwarded-For = bereq.http.X-Forwarded-For;
   set beresp.do_esi = false;
   unset beresp.http.set-cookie;
   unset beresp.http.cookie;
 
-  #if (bereq.http.X-Forwarded-For ~ "67.249.255.+$") {
-  #  set beresp.do_esi = false;
-  #}
+  if (bereq.http.X-Forwarded-For ~ "67\.249\.255\..*") {
+    set beresp.do_esi = false;
+  }
 
   set beresp.http.Cache-Control = "max-age=86400, public=true";
   set beresp.ttl = 1h;
