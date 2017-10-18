@@ -8,6 +8,8 @@ export KEY_COINHIVE ?= qvqJHHQ8CTQXKT4bsSszNbs6fSpnma5D
 
 .PHONY: build
 build:
+	@ docker pull nginx:1.13
+	@ docker pull million12/varnish:latest
 	@ docker-compose build loggly datadog_metrics
 
 .PHONY: release
