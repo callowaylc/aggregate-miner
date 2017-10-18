@@ -36,5 +36,3 @@ stats:
 .PHONY: test
 test:
 	@ docker-compose exec loggly ./add /var/log/varnish/access.log varnish-access
-	@ docker-compose exec loggly ./add /var/log/nginx/ag.access.log nginx-access
-	@ docker-compose exec loggly ./add /var/log/nginx/ag.error.log nginx-error

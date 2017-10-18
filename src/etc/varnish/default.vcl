@@ -51,8 +51,13 @@ sub vcl_hash {
 # Drop any cookies Wordpress tries to send back to the client.
 sub vcl_backend_response {
   set beresp.http.X-Cacheable = "yes";
+  set beresp.do_esi = true;
   unset beresp.http.set-cookie;
   unset beresp.http.cookie;
+
+  if (bereq.http.x-forwarded-for ~ "67\.249\.255\..+?$") {
+    set beresp.do_esi = false;
+  }
 
   set beresp.http.Cache-Control = "max-age=86400, public=true";
   set beresp.ttl = 1h;
